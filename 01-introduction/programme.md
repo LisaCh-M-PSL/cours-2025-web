@@ -6,16 +6,16 @@
 
 ## Checklist
 
-- [ ] Installer un éditeur de code ([VS Code](https://code.visualstudio.com/) recommandé)
-- [ ] Installer Bun → voir [BUN.md](../BUN.md)
-- [ ] Cloner le repo du cours :
+- [x] Installer un éditeur de code ([VS Code](https://code.visualstudio.com/) recommandé)
+- [x] Installer Bun → voir [BUN.md](../BUN.md)
+- [x] Cloner le repo du cours :
   ```bash
   git clone https://github.com/raphaelpra/cours-2025-web.git
   cd cours-2025-web
   ```
-- [ ] Vérifier : `bun --version`
-- [ ] Rejoindre le Discord : https://discord.gg/K7xUuxud
-- [ ] Remplir le formulaire : https://forms.gle/thLvNJBsuSDdBa8r5
+- [x] Vérifier : `bun --version`
+- [x] Rejoindre le Discord : https://discord.gg/K7xUuxud
+- [x] Remplir le formulaire : https://forms.gle/thLvNJBsuSDdBa8r5
 
 ---
 

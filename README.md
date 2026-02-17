@@ -12,15 +12,16 @@ Bienvenue dans le repository du cours de développement Web !
 
 | # | Date |
 |---|------|
-| 1 | 10/02/2025 |
-| 2 | |
-| 3 | |
-| 4 | |
-| 5 | |
-| 6 | |
-| 7 | |
-| 8 | |
-| 9 | |
+| 1 | Mardi 10/02 |
+| 2 | Mardi 17/02 |
+| 3 | Vendredi 20/02 |
+| 4 | Mardi 24/02 |
+| 5 | Mardi 10/03 |
+| | *vacances* |
+| 6 | Mardi 24/03 |
+| 7 | Mardi 31/03 |
+| 8 | Mardi 07/04 |
+| 9 | Mardi 21/04 |
 
 ---
 
