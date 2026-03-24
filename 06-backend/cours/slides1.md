@@ -13,14 +13,6 @@ class: middle, slide_title
 layout: true
 <img class="slide_header_mpt" src="static/media/logos/logo_mines_paris.png">
 
-<div class="slide_footer">
-    <div class="wrap">
-        <span>2025 - <i> Réseaux & Backend</i>
-        - <a class="current-slides" href="slides1.html">1: Réseaux</a>
-        </span>
-    </div>
-</div>
-
 ---
 
 # Le monde d'aujourd'hui — ultra connecté 🕸️
@@ -66,24 +58,49 @@ Ce chiffre est le même pour **tout le monde** sur terre, en temps réel.
 
 ## Le formulaire du prof 📝
 
-Un prof met en ligne un formulaire de feedback. **30 élèves** répondent, chacun depuis sa machine. Le prof consulte ensuite **toutes les réponses** depuis la sienne.
+Un prof met en ligne un formulaire. **30 élèves** répondent depuis leur machine. Le prof consulte **toutes les réponses** depuis la sienne.
 
-.center[<img src="static/media/client-server.svg" style="width: 55%;">]
+.center[<img src="static/media/client-server.svg" style="width: 45%;">]
 
---
+**Le défi :** trois acteurs, un seul point central
 
-.center[
-❓ Trois acteurs (le prof, 30 élèves), un seul point central ❓
+- Les élèves **écrivent** vers un endroit commun
+- Le prof **lit** depuis un autre endroit  
+- Il faut un **serveur** central qui stocke et redistribue
+
+.center[C'est ce qu'on va construire 🚀]
+
+---
+
+# Site statique vs dynamique
+
+.cols[
+.fifty[
+
+## Statique 🗂️
+
+- HTML/CSS/JS dans des fichiers
+- Chaque visiteur voit la même chose
+- Pas de "calcul" côté serveur
+
+.center[<img src="static/media/site-static.svg" style="width: 60%;">]
+
+**Exemple** : Un portfolio simple, une page de présentation
+
 ]
+.fifty[
 
---
+## Dynamique ⚡
 
-- Les élèves **écrivent** des données vers un endroit commun
-- Le prof **lit** ces mêmes données depuis un autre endroit
-- Il faut un **serveur** qui reçoit, stocke et redistribue
+- Le serveur génère la réponse à la volée
+- Contenu différent selon l'utilisateur, l'heure, la base de données
+- Interaction client ↔ serveur
 
-.center[
-C'est exactement ce qu'on va construire dans ce cours 🚀
+.center[<img src="static/media/dynamic-site1.svg" style="width: 65%;">]
+
+**Exemple** : YouTube, Gmail, ce formulaire de feedback
+
+]
 ]
 
 ---
@@ -332,6 +349,8 @@ Comment je fais pour connaître mon IP ?
 
 Je demande à un site extérieur
 
+📄 [`cours/snippets/get-public-ip.js`](cours/snippets/get-public-ip.js)
+
 ```javascript
 const response = await fetch(
   "https://api64.ipify.org?format=json"
@@ -349,23 +368,24 @@ $ bun run my-public-ip.js
 .fifty[
 Je demande à mon OS
 
+📄 [`cours/snippets/get-local-ip.js`](cours/snippets/get-local-ip.js)
+
 ```javascript
 import os from "node:os"
 
-const interfaces = os.networkInterfaces()
-for (const [name, addrs] of Object.entries(interfaces)) {
-  for (const addr of addrs) {
-    if (addr.family === "IPv4" && !addr.internal) {
-      console.log(`${name}: ${addr.address}`)
+for (const [name, addrs] of Object.entries(os.networkInterfaces())) {
+    for (const addr of addrs) {
+        if (addr.family === "IPv4" && !addr.internal) {
+            console.log(`${name}: ${addr.address}`)
+        }
     }
-  }
 }
 ```
 
-Et ça peut être différent !
 ```bash
 $ bun run my-local-ip.js
 *en0: 10.1.1.15
+*eth0: 192.168.1.42
 ```
 ]
 ]
@@ -388,10 +408,11 @@ Et mon petit doigt me dit que :
 
 Il y a deux types d'adresses IP :
 
-- publiques : visibles sur le réseau, **uniques**
-- privées : utilisées **uniquement** dans un réseau local
+- **publiques** : visibles sur le réseau, **uniques**
+- **privées** : utilisées **uniquement** dans un réseau local
 
-<img src="static/media/nat-routing.svg" width="125%">
+.center[Le NAT traduit entre les deux.]
+
 ]
 
 .thirty-five[
@@ -403,6 +424,29 @@ les adresses privées réservées :
 - `172.16.0.0/12` <br> 2<sup>20</sup> = 1,048,576 adresses
 
 - `10.0.0.0/8` <br> 2<sup>24</sup> = 16,777,216 adresses
+]
+]
+
+---
+
+## Comment ça marche concrètement
+
+.center[
+<img src="static/media/nat-routing.svg" width="75%">
+]
+
+.cols[
+.fifty[
+**Trafic sortant :**
+- Votre ordinateur (10.1.1.15)
+- La box remplace par l'IP publique (138.96.202.10)
+- Le serveur distant répond à l'IP publique
+]
+.fifty[
+**Trafic entrant :**
+- La box reçoit la réponse
+- Elle sait que c'est pour vous (10.1.1.15)
+- Elle retransmet à votre ordinateur
 ]
 ]
 
@@ -438,20 +482,24 @@ Non-authoritative answer:
 Name:	oasis.minesparis.psl.eu
 *Address: 91.134.82.158
 ```
+
+```bash
+$ ping -c 1 oasis.minesparis.psl.eu
+PING oasis.minesparis.psl.eu (91.134.82.158) ...
+```
 ]
 
 .fifty[
 
-```bash
-$ host oasis.minesparis.psl.eu
-*oasis.minesparis.psl.eu has address 91.134.82.158
-```
+Ou depuis Bun/Node.js :
 
-```bash
-$ dig @8.8.8.8 oasis.minesparis.psl.eu A +noall +answer
+📄 [`cours/snippets/dns-lookup.js`](cours/snippets/dns-lookup.js)
 
-;; global options: +cmd
-*oasis.minesparis.psl.eu. 161	IN	A	91.134.82.158
+```javascript
+import { lookup } from "node:dns/promises"
+
+const { address } = await lookup("oasis.minesparis.psl.eu")
+console.log("IP:", address) // 91.134.82.158
 ```
 
 ]
@@ -518,13 +566,27 @@ Sur une machine on a 2<sup>16</sup> = 65,536
 ]
 ]
 
-<img src="static/media/packet-layers.svg" width="100%" style="margin-top: -30px">
+---
 
---
+## Les ports normalisés
 
-Quelques ports normalisés :
+.center[<img src="static/media/packet-layers.svg" style="width: 80%;">]
 
-.center[22 : SSH, 25 : SMTP, 53 : DNS, 80 : HTTP, 443 : HTTPS]
+<br>
+
+Quelques ports standard :
+
+.center[
+
+| Port | Service |
+|:----:|:--------|
+| 22 | SSH |
+| 25 | SMTP (email) |
+| 53 | DNS |
+| 80 | HTTP |
+| 443 | HTTPS |
+
+]
 
 ---
 
@@ -731,6 +793,8 @@ Via JavaScript c'est facile !
 .cols[
 .fifty[
 
+📄 [`cours/snippets/json-serialize.js`](cours/snippets/json-serialize.js)
+
 ```javascript
 const data = {
   name: "Ada Lovelace",
@@ -741,6 +805,8 @@ const serialized = JSON.stringify(data)
 
 ]
 .fifty[
+
+📄 [`cours/snippets/json-parse.js`](cours/snippets/json-parse.js)
 
 ```javascript
 const serialized = '{"name": "Ada Lovelace", "age": 36}'
@@ -819,6 +885,8 @@ En gros c'est pour dire que l'on veut faire une requête de type `GET`. Il exist
 
 En JavaScript, `fetch` est disponible nativement — dans le navigateur comme dans Bun 🎉
 
+📄 [`cours/snippets/fetch-get.js`](cours/snippets/fetch-get.js)
+
 ```javascript
 const response = await fetch("https://httpbin.org/get")
 const data = await response.json()
@@ -826,6 +894,8 @@ console.log(data)
 ```
 
 --
+
+📄 [`cours/snippets/fetch-post.js`](cours/snippets/fetch-post.js)
 
 ```javascript
 const response = await fetch("https://httpbin.org/post", {
@@ -847,37 +917,186 @@ console.log(result)
 
 Lorsque l'on fait une requête à un serveur via HTTP/HTTPS, ce dernier nous renvoie un code de retour.
 
-<br>
 .center[Ces codes sont normalisés]
-<br>
-Voici un extrait des codes possibles :
 
---
-
-- 200 : ok tout s'est bien passé ✅
-
---
-
-- 301/302 : redirection de la page ⤴️
-
---
-
-- 401 : il faut s'authentifier 🔐
-
---
-
-- 403 : minute papillon tu n'as pas le droit d'accéder à ça ! ⛔
-
---
-
-- 404 : ce que tu me demandes n'existe pas ⁉️
-
---
-
-- 5XX : là c'est un problème de serveur 💣
+| Code | Signification |
+|:----:|:-------------|
+| **200** | ✅ OK, tout s'est bien passé |
+| **301/302** | ⤴️ Redirection de la page |
+| **401** | 🔐 Authentification requise |
+| **403** | ⛔ Accès interdit |
+| **404** | ⁉️ Ressource non trouvée |
+| **5XX** | 💣 Erreur serveur |
 
 <br>
-La première chose à faire : vérifier que le code de retour est bien 200, sinon pas la peine de continuer !
+
+.center[La première chose à faire : vérifier que le code est **200**]
+
+--
+
+❓ **Pourquoi vérifier le code de retour ?**
+
+```javascript
+const response = await fetch("http://localhost:3000/api/data")
+
+if (!response.ok) {
+  console.error(`Erreur ${response.status}`)
+  return
+}
+
+const data = await response.json()
+```
+
+---
+
+# Le voyage d'une requête 🗺️
+
+Vous tapez `https://example.com/contact` dans votre navigateur. Que se passe-t-il ?
+
+.center[
+<div style="display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 16px;">
+  <div style="background: #dbeafe; padding: 12px 16px; border-radius: 8px; border-left: 4px solid #3b82f6;">
+    <strong>1. DNS</strong><br>example.com → 93.184.216.34
+  </div>
+  <span style="font-size: 24px;">→</span>
+  <div style="background: #dcfce7; padding: 12px 16px; border-radius: 8px; border-left: 4px solid #22c55e;">
+    <strong>2. TCP Handshake</strong><br>SYN → SYN-ACK → ACK
+  </div>
+  <span style="font-size: 24px;">→</span>
+  <div style="background: #fef3c7; padding: 12px 16px; border-radius: 8px; border-left: 4px solid #f59e0b;">
+    <strong>3. HTTP Request</strong><br>GET /contact
+  </div>
+  <span style="font-size: 24px;">→</span>
+  <div style="background: #fce7f3; padding: 12px 16px; border-radius: 8px; border-left: 4px solid #ec4899;">
+    <strong>4. Serveur</strong><br>Génère la réponse
+  </div>
+  <span style="font-size: 24px;">→</span>
+  <div style="background: #e0e7ff; padding: 12px 16px; border-radius: 8px; border-left: 4px solid #6366f1;">
+    <strong>5. Réponse</strong><br>HTML affiché !
+  </div>
+</div>
+]
+
+<br>
+
+.center[
+⏱️ Tout ça en ~300ms (ou moins en local)
+]
+
+---
+
+# En 0.3 secondes : le chronomètre ⏱️
+
+Vous tapez `google.com` et la page apparaît. Voici le timing réel :
+
+.center[
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 18px; text-align: left; max-width: 600px; margin: 0 auto;">
+<div style="display: flex; border-bottom: 1px solid #ddd; padding: 8px 0;">
+  <span style="width: 150px; color: #666;">0ms</span>
+  <span>Vous appuyez sur Entrée</span>
+</div>
+<div style="display: flex; border-bottom: 1px solid #ddd; padding: 8px 0;">
+  <span style="width: 150px; color: #3b82f6;">+10ms</span>
+  <span>🔍 DNS : google.com → 142.250.185.78</span>
+</div>
+<div style="display: flex; border-bottom: 1px solid #ddd; padding: 8px 0;">
+  <span style="width: 150px; color: #22c55e;">+15ms</span>
+  <span>🤝 TCP handshake (SYN, SYN-ACK, ACK)</span>
+</div>
+<div style="display: flex; border-bottom: 1px solid #ddd; padding: 8px 0;">
+  <span style="width: 150px; color: #f59e0b;">+20ms</span>
+  <span>📤 HTTP : GET / envoyé</span>
+</div>
+<div style="display: flex; border-bottom: 1px solid #ddd; padding: 8px 0;">
+  <span style="width: 150px; color: #ec4899;">+50ms</span>
+  <span>⚙️ Serveur génère la réponse</span>
+</div>
+<div style="display: flex; border-bottom: 1px solid #ddd; padding: 8px 0;">
+  <span style="width: 150px; color: #6366f1;">+80ms</span>
+  <span>📥 Réponse reçue, HTML parsé</span>
+</div>
+<div style="display: flex; padding: 8px 0;">
+  <span style="width: 150px; color: #666;">+300ms</span>
+  <span>🎉 Page affichée (CSS, images...)</span>
+</div>
+</div>
+]
+
+<br>
+
+.center[
+Sans DNS ? Impossible de trouver le serveur.<br>
+Sans TCP ? Impossible d'établir la connexion.<br>
+Sans HTTP ? Impossible de demander la page.
+]
+
+---
+
+# Déboguer quand ça ne marche pas 🐛
+
+Trois erreurs classiques et comment les repérer :
+
+.cols[
+.fifty[
+
+## 1. "Page Not Found" 404
+
+L'URL existe... ou pas ?
+
+```bash
+$ curl http://localhost:3000/api/users
+404 Not Found
+```
+
+✅ **Vérifier** : la route est-elle bien définie côté serveur ?
+
+]
+.fifty[
+
+## 2. CORS bloqué
+
+Le navigateur refuse la réponse pour "sécurité".
+
+```
+Access-Control-Allow-Origin header
+is missing
+```
+
+✅ **Solution** : Le serveur doit envoyer le header `Access-Control-Allow-Origin: *`
+
+]
+]
+
+.cols[
+.fifty[
+
+## 3. Timeout / Pas de réponse
+
+Le serveur ne répond pas.
+
+```bash
+$ curl http://localhost:3000
+# ... attend ... attend ...
+curl: (7) Failed to connect
+```
+
+✅ **Vérifier** : Le serveur tourne-t-il ? Sur le bon port ? Firewall ?
+
+]
+.fifty[
+
+## Outils de debug 🔧
+
+- **curl** : tester rapidement une URL
+- **DevTools Network** : voir les requêtes/réponses
+- **Bun console** : `console.log(request.url)`
+
+.center[
+Le code de retour est votre premier indice !
+]
+
+]
+]
 
 ---
 
@@ -1008,6 +1227,8 @@ Considérons un serveur générant des nombres aléatoires à la demande. L'API 
 
 Avec Bun, ça donnerait :
 
+📄 [`cours/snippets/random-api-server.js`](cours/snippets/random-api-server.js)
+
 ```javascript
 Bun.serve({
   port: 3000,
@@ -1066,6 +1287,8 @@ class: middle, center
 
 # Premier serveur avec Bun
 
+📄 [`cours/snippets/random-api-server.js`](cours/snippets/random-api-server.js)
+
 ```javascript
 Bun.serve({
   port: 3000,
@@ -1104,6 +1327,8 @@ La fonction `fetch(request)` reçoit une `Request` et renvoie une `Response`.
 
 # Routes et méthodes
 
+📄 [`cours/snippets/random-api-server.js`](cours/snippets/random-api-server.js)
+
 ```javascript
 Bun.serve({
   port: 3000,
@@ -1127,6 +1352,8 @@ On choisit quoi répondre selon l'**URL** et la **méthode HTTP**.
 ---
 
 # Un formulaire HTML servi par Bun
+
+📄 [`cours/snippets/serve-html-form.js`](cours/snippets/serve-html-form.js)
 
 ```javascript
 if (url.pathname === "/contact") {
@@ -1152,6 +1379,8 @@ Le navigateur s'occupe de tout : construire le body, envoyer la requête au bon 
 ---
 
 # Recevoir un formulaire côté serveur
+
+📄 [`cours/snippets/receive-form-post.js`](cours/snippets/receive-form-post.js)
 
 ```javascript
 if (url.pathname === "/submit" && request.method === "POST") {
@@ -1179,6 +1408,8 @@ formulaire HTML → body HTTP → `request.formData()` → validation → répon
 
 # Sauvegarder des soumissions
 
+📄 [`cours/snippets/save-submissions.js`](cours/snippets/save-submissions.js)
+
 ```javascript
 const dataFile = "./submissions.json"
 
@@ -1203,6 +1434,8 @@ Pour le cours, un fichier JSON local suffit. Ce n'est pas la solution la plus ro
 
 # Exposer une API JSON
 
+📄 [`cours/snippets/json-api-route.js`](cours/snippets/json-api-route.js)
+
 ```javascript
 if (url.pathname === "/api/submissions" && request.method === "GET") {
   const submissions = await loadSubmissions()
@@ -1221,6 +1454,9 @@ curl http://localhost:3000/api/submissions
 ]
 .fifty[
 Tester avec fetch (navigateur ou Bun) :
+
+📄 [`cours/snippets/fetch-api.js`](cours/snippets/fetch-api.js)
+
 ```javascript
 const res = await fetch(
   "http://localhost:3000/api/submissions"
@@ -1244,6 +1480,8 @@ Le serveur décide du format selon la route.
 # Pour aller plus loin : UDP + `nc`
 
 Pour montrer que le réseau ne se résume pas à HTTP, voici un serveur UDP minimal :
+
+📄 [`cours/snippets/udp-server.js`](cours/snippets/udp-server.js)
 
 ```javascript
 import { createSocket } from "node:dgram"

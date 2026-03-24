@@ -110,43 +110,43 @@ curl -X POST http://localhost:3000/contact \
 
 ### 5. Live coding Bun (~45 min)
 
-> Démo exécutée en live, fichiers dans `cours/`.
+> Démo exécutée en live, fichiers dans `demos/`.
 
 Ordre conseillé :
 
 1. **Premier serveur HTTP**
    ```bash
-   bun run 06-backend/cours/01-first-server.js
+   bun run 06-backend/demos/01-first-server.js
    ```
 
 2. **Routes + méthodes**
    ```bash
-   bun run 06-backend/cours/02-routes-methods.js
+   bun run 06-backend/demos/02-routes-methods.js
    ```
 
 3. **Query params**
    ```bash
-   bun run 06-backend/cours/03-query-params.js
+   bun run 06-backend/demos/03-query-params.js
    ```
 
 4. **Formulaire HTML**
    ```bash
-   bun run 06-backend/cours/04-html-form.js
+   bun run 06-backend/demos/04-html-form.js
    ```
 
 5. **Recevoir un POST**
    ```bash
-   bun run 06-backend/cours/05-post-body.js
+   bun run 06-backend/demos/05-post-body.js
    ```
 
 6. **Stocker des soumissions**
    ```bash
-   bun run 06-backend/cours/06-save-submissions.js
+   bun run 06-backend/demos/06-save-submissions.js
    ```
 
 7. **Exposer une API JSON**
    ```bash
-   bun run 06-backend/cours/07-json-api.js
+   bun run 06-backend/demos/07-json-api.js
    ```
 
 Messages clés :
@@ -183,7 +183,7 @@ Bonus :
 > Pour montrer que le réseau ne se résume pas à HTTP.
 
 ```bash
-bun run 06-backend/cours/08-udp-server.js
+bun run 06-backend/demos/08-udp-server.js
 echo "ping" | nc -u -w1 127.0.0.1 4001
 ```
 
@@ -212,16 +212,17 @@ echo "ping" | nc -u -w1 127.0.0.1 4001
 | `programme.md` | Ce document |
 | `cours.md` | Support détaillé pour suivre le live coding |
 | `tp-form-backend.md` | Énoncé du TP |
-| `cours/01-first-server.js` | Premier serveur HTTP minimal |
-| `cours/02-routes-methods.js` | Routes et méthodes HTTP |
-| `cours/03-query-params.js` | Lecture des query params |
-| `cours/04-html-form.js` | Formulaire HTML servi par Bun |
-| `cours/05-post-body.js` | Lecture d'un body `POST` |
-| `cours/06-save-submissions.js` | Sauvegarde de soumissions en JSON |
-| `cours/07-json-api.js` | Mini API JSON |
-| `cours/08-udp-server.js` | Serveur UDP pour test avec `nc` |
-| `demos/slides1.md` | Slides du cours |
-| `demos/build-slides.ts` | Générateur HTML de slides en Bun |
+| `cours/slides1.md` | Slides du cours (support visuel) |
+| `cours/build-slides.ts` | Générateur HTML de slides en Bun |
+| `cours/serve.ts` | Serveur local pour les slides |
+| `demos/01-first-server.js` | Premier serveur HTTP minimal |
+| `demos/02-routes-methods.js` | Routes et méthodes HTTP |
+| `demos/03-query-params.js` | Lecture des query params |
+| `demos/04-html-form.js` | Formulaire HTML servi par Bun |
+| `demos/05-post-body.js` | Lecture d'un body `POST` |
+| `demos/06-save-submissions.js` | Sauvegarde de soumissions en JSON |
+| `demos/07-json-api.js` | Mini API JSON |
+| `demos/08-udp-server.js` | Serveur UDP pour test avec `nc` |
 
 ---
 
@@ -231,4 +232,4 @@ echo "ping" | nc -u -w1 127.0.0.1 4001
 - [ ] Finir le TP si pas terminé en cours
 - [ ] Tester les routes avec `curl`
 - [ ] Relire les slides sur IP / DNS / ports / HTTP
-- [ ] *(optionnel)* Modifier `08-udp-server.js` pour répondre aussi au client
+- [ ] *(optionnel)* Modifier `demos/08-udp-server.js` pour répondre aussi au client

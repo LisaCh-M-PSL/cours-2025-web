@@ -41,3 +41,8 @@ Thumbs.db
 *.swo
 
 tmp
+
+# Screenshots de test
+*.png
+!**/logo*.png
+!**/icon*.png
