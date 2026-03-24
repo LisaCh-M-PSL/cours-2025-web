@@ -1328,32 +1328,35 @@ class: middle, center
 
 # Premier serveur avec Bun
 
-📄 [`snippets/random-api-server.js`](snippets/random-api-server.js)
+💻 **À vous de jouer !**
 
-```javascript
-Bun.serve({
-  port: 3000,
-  fetch(request) {
-    return new Response("Bonjour depuis Bun 👋")
-  },
-})
-console.log("Server running on http://localhost:3000")
-```
+📄 [TD 1 — Votre premier serveur](td-01-premier-server.md)
 
---
+Ce TD vous guide pour créer pas à pas votre premier serveur HTTP avec Bun.
 
 .cols[
 .fifty[
-Tester dans le navigateur :
-```
-http://localhost:3000
-```
+
+### Ce que vous allez construire :
+
+- ✅ Serveur sur port 3000
+- ✅ Réponse "Bonjour !"
+- ✅ Routes `/` et `/about`
+- ✅ Gestion des erreurs 404
+
 ]
 .fifty[
-Tester avec curl :
+
+### Test rapide :
+
 ```bash
+# Démarrer le serveur
+bun run 06-backend/perso/td1-server.js
+
+# Tester
 curl http://localhost:3000
 ```
+
 ]
 ]
 
@@ -1368,27 +1371,36 @@ La fonction `fetch(request)` reçoit une `Request` et renvoie une `Response`.
 
 # Routes et méthodes
 
-📄 [`snippets/random-api-server.js`](snippets/random-api-server.js)
+📄 [Suite du TD 1 — Routes et méthodes](td-01-premier-server.md#étape-2--ajouter-une-route)
+
+.cols[
+.fifty[
+
+### Concepts clés :
+
+- `url.pathname` → le chemin de l'URL
+- `request.method` → GET, POST, etc.
+- `new URL(request.url)` pour parser
+
+]
+.fifty[
+
+### Pattern de base :
 
 ```javascript
-Bun.serve({
-  port: 3000,
-  fetch(request) {
-    const url = new URL(request.url)
+const url = new URL(request.url)
 
-    if (url.pathname === "/" && request.method === "GET") {
-      return new Response("Page d'accueil")
-    }
-    if (url.pathname === "/about" && request.method === "GET") {
-      return new Response("À propos")
-    }
-
-    return new Response("Not Found", { status: 404 })
-  },
-})
+if (url.pathname === "/" && request.method === "GET") {
+  return new Response("Accueil")
+}
 ```
 
+]
+]
+
+.center[
 On choisit quoi répondre selon l'**URL** et la **méthode HTTP**.
+]
 
 ---
 
