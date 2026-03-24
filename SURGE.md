@@ -16,6 +16,7 @@ Surge n'a pas besoin d'être installé. On le lance avec `bunx` :
 
 ```bash
 bunx surge
+npx surge
 ```
 
 ### C'est quoi `bunx` ?

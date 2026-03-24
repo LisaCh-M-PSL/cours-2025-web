@@ -1,0 +1,8 @@
+{
+  "name": "06-backend",
+  "version": "1.0.0",
+  "scripts": {
+    "slides": "bun run cours/serve.ts",
+    "build-slides": "bun run cours/build-slides.ts"
+  }
+}

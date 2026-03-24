@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client formulaire</title>
+    <style>
+        body { font-family: sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; }
+        form { display: grid; gap: 12px; }
+        input, textarea, button, select { font: inherit; padding: 10px; }
+        pre { padding: 12px; background: #0f172a; color: #e2e8f0; border-radius: 12px; }
+    </style>
+</head>
+<body>
+    <h1>Client HTML pour tester l'API JSON</h1>
+    <p>Ce fichier peut être ouvert directement dans le navigateur pendant que <code>07-json-api.js</code> tourne.</p>
+
+    <form id="contact-form">
+        <label>Nom <input name="name" required /></label>
+        <label>Type
+            <select name="type">
+                <option value="contact">contact</option>
+                <option value="feedback">feedback</option>
+                <option value="inscription">inscription</option>
+            </select>
+        </label>
+        <label>Message <textarea name="message" required></textarea></label>
+        <button type="submit">Envoyer vers l'API</button>
+    </form>
+
+    <pre id="result">Pas encore de requête.</pre>
+
+    <script>
+        const form = document.getElementById("contact-form")
+        const result = document.getElementById("result")
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault()
+
+            const data = new FormData(form)
+            const body = Object.fromEntries(data.entries())
+
+            const response = await fetch("http://localhost:3006/api/submissions", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body),
+            })
+
+            const json = await response.json()
+            result.textContent = JSON.stringify(json, null, 2)
+        })
+    </script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # Cours 02 — JavaScript
 
-**Date :** Lundi 17 février 2025
+**Date :** mardi 17 février 2025
 
 ---
 

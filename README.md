@@ -1,5 +1,7 @@
 # Cours Web - Mines Paris 2025
 
+[![GitHub stars](https://img.shields.io/github/stars/raphaelpra/cours-2025-web?style=social)](https://github.com/raphaelpra/cours-2025-web)
+
 Bienvenue dans le repository du cours de développement Web !
 
 ## Informations pratiques
